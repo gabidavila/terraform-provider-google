@@ -324,7 +324,26 @@ func expandNodeConfig(v interface{}) *containerBeta.NodeConfig {
 		nc.Taints = nodeTaints
 	}
 
+	if v, ok := nodeConfig["workload_metadata_config"]; ok {
+		nc.WorkloadMetadataConfig = expandWorkloadMetadataConfig(v)
+	}
+
 	return nc
+}
+
+func expandWorkloadMetadataConfig(v interface{}) *containerBeta.WorkloadMetadataConfig {
+	if v == nil {
+		return nil
+	}
+	ls := v.([]interface{})
+	if len(ls) == 0 {
+		return nil
+	}
+
+	cfg := ls[0].(map[string]interface{})
+	return &containerBeta.WorkloadMetadataConfig{
+		NodeMetadata: cfg["node_metadata"].(string),
+	}
 }
 
 func flattenNodeConfig(c *containerBeta.NodeConfig) []map[string]interface{} {
@@ -349,6 +368,7 @@ func flattenNodeConfig(c *containerBeta.NodeConfig) []map[string]interface{} {
 		"min_cpu_platform":         c.MinCpuPlatform,
 		"shielded_instance_config": flattenShieldedInstanceConfig(c.ShieldedInstanceConfig),
 		"taint":                    flattenTaints(c.Taints),
+		"workload_metadata_config": flattenWorkloadMetadataConfig(c.WorkloadMetadataConfig),
 	})
 
 	if len(c.OauthScopes) > 0 {
@@ -387,6 +407,16 @@ func flattenTaints(c []*containerBeta.NodeTaint) []map[string]interface{} {
 			"key":    taint.Key,
 			"value":  taint.Value,
 			"effect": taint.Effect,
+		})
+	}
+	return result
+}
+
+func flattenWorkloadMetadataConfig(c *containerBeta.WorkloadMetadataConfig) []map[string]interface{} {
+	result := []map[string]interface{}{}
+	if c != nil {
+		result = append(result, map[string]interface{}{
+			"node_metadata": c.NodeMetadata,
 		})
 	}
 	return result

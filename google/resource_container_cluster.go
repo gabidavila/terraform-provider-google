@@ -638,6 +638,12 @@ func resourceContainerCluster() *schema.Resource {
 				Description:      `The name or self_link of the Google Compute Engine subnetwork in which the cluster's instances are launched.`,
 			},
 
+			"self_link": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: `Server-defined URL for the resource.`,
+			},
+
 			"endpoint": {
 				Type:        schema.TypeString,
 				Computed:    true,
@@ -1015,7 +1021,6 @@ func resourceContainerClusterCreate(d *schema.ResourceData, meta interface{}) er
 			ForceSendFields: []string{"Enabled"},
 		},
 		ReleaseChannel: expandReleaseChannel(d.Get("release_channel")),
-
 		MasterAuth:     expandMasterAuth(d.Get("master_auth")),
 		ResourceLabels: expandStringMap(d, "resource_labels"),
 	}
@@ -1269,7 +1274,10 @@ func resourceContainerClusterRead(d *schema.ResourceData, meta interface{}) erro
 	}
 
 	if err := d.Set("endpoint", cluster.Endpoint); err != nil {
-		return fmt.Errorf("Error reading endpoint: %s", err)
+		return fmt.Errorf("Error setting endpoint: %s", err)
+	}
+	if err := d.Set("self_link", cluster.SelfLink); err != nil {
+		return fmt.Errorf("Error setting self link: %s", err)
 	}
 	if err := d.Set("maintenance_policy", flattenMaintenancePolicy(cluster.MaintenancePolicy)); err != nil {
 		return err
@@ -1330,7 +1338,6 @@ func resourceContainerClusterRead(d *schema.ResourceData, meta interface{}) erro
 	if err := d.Set("release_channel", flattenReleaseChannel(cluster.ReleaseChannel)); err != nil {
 		return err
 	}
-
 	if err := d.Set("authenticator_groups_config", flattenAuthenticatorGroupsConfig(cluster.AuthenticatorGroupsConfig)); err != nil {
 		return err
 	}

@@ -76,7 +76,7 @@ func dataSourceGoogleNetblockIpRangesRead(d *schema.ResourceData, meta interface
 		}
 	case "google-netblocks":
 		// https://cloud.google.com/vpc/docs/configure-private-google-access?hl=en#ip-addr-defaults
-		const GOOGLE_NETBLOCK_URL = "http://www.gstatic.com/ipranges/goog.json"
+		const GOOGLE_NETBLOCK_URL = "https://www.gstatic.com/ipranges/goog.json"
 		CidrBlocks, err := getCidrBlocksFromUrl(GOOGLE_NETBLOCK_URL)
 
 		if err != nil {

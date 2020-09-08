@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"regexp"
+	"strings"
 	"time"
 
 	"github.com/hashicorp/go-cleanhttp"
@@ -362,7 +363,8 @@ func (c *Config) LoadAndValidate(ctx context.Context) error {
 	c.clientContainerBeta.UserAgent = c.userAgent
 	c.clientContainerBeta.BasePath = containerBetaClientBasePath
 
-	dnsClientBasePath := c.DNSBasePath + "projects/"
+	dnsClientBasePath := removeBasePathVersion(c.DNSBasePath)
+	dnsClientBasePath = strings.ReplaceAll(dnsClientBasePath, "/dns/", "")
 	log.Printf("[INFO] Instantiating Google Cloud DNS client for path %s", dnsClientBasePath)
 	c.clientDns, err = dns.NewService(ctx, option.WithHTTPClient(client))
 	if err != nil {
@@ -371,7 +373,8 @@ func (c *Config) LoadAndValidate(ctx context.Context) error {
 	c.clientDns.UserAgent = c.userAgent
 	c.clientDns.BasePath = dnsClientBasePath
 
-	dnsBetaClientBasePath := c.DnsBetaBasePath + "projects/"
+	dnsBetaClientBasePath := removeBasePathVersion(c.DnsBetaBasePath)
+	dnsBetaClientBasePath = strings.ReplaceAll(dnsBetaClientBasePath, "/dns/", "")
 	log.Printf("[INFO] Instantiating Google Cloud DNS Beta client for path %s", dnsBetaClientBasePath)
 	c.clientDnsBeta, err = dnsBeta.NewService(ctx, option.WithHTTPClient(client))
 	if err != nil {

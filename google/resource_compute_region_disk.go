@@ -1029,6 +1029,10 @@ func resourceComputeRegionDiskDecoder(d *schema.ResourceData, meta interface{}, 
 			transformed["kmsKeyName"] = strings.Split(kmsKeyName.(string), "/cryptoKeyVersions")[0]
 		}
 
+		if kmsKeyServiceAccount, ok := original["kmsKeyServiceAccount"]; ok {
+			transformed["kmsKeyServiceAccount"] = kmsKeyServiceAccount
+		}
+
 		res["diskEncryptionKey"] = transformed
 	}
 
@@ -1045,6 +1049,10 @@ func resourceComputeRegionDiskDecoder(d *schema.ResourceData, meta interface{}, 
 			transformed["kmsKeyName"] = strings.Split(kmsKeyName.(string), "/cryptoKeyVersions")[0]
 		}
 
+		if kmsKeyServiceAccount, ok := original["kmsKeyServiceAccount"]; ok {
+			transformed["kmsKeyServiceAccount"] = kmsKeyServiceAccount
+		}
+
 		res["sourceImageEncryptionKey"] = transformed
 	}
 
@@ -1059,6 +1067,10 @@ func resourceComputeRegionDiskDecoder(d *schema.ResourceData, meta interface{}, 
 			// The response for crypto keys often includes the version of the key which needs to be removed
 			// format: projects/<project>/locations/<region>/keyRings/<keyring>/cryptoKeys/<key>/cryptoKeyVersions/1
 			transformed["kmsKeyName"] = strings.Split(kmsKeyName.(string), "/cryptoKeyVersions")[0]
+		}
+
+		if kmsKeyServiceAccount, ok := original["kmsKeyServiceAccount"]; ok {
+			transformed["kmsKeyServiceAccount"] = kmsKeyServiceAccount
 		}
 
 		res["sourceSnapshotEncryptionKey"] = transformed
